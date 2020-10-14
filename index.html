@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>My A-Frame Scene</title>
+  <script src="scripts/aframe104.js"></script> <!-- main framwork --> 
+  <script src="scripts/event_set_component_412.js"></script>  <!-- enable mouse to act as cursor on desktop -->
+  <script src="scripts/lookAt.js"></script> <!-- lookAt component - orient object  to face other object https://unpkg.com/browse/aframe-look-at-component@0.8.0/ -->
+  <script src="https://unpkg.com/aframe-randomizer-components@3.0.2/dist/aframe-randomizer-components.min.js"></script> <!-- https://github.com/supermedium/superframe/tree/master/components/randomizer/ -->
+</head>
+
+<body>
+  <a-scene>
+  
+  <a-assets>
+    <img src="images/0.jpg" id="i0">
+    <img src="images/1.jpg" id="i1">
+    <img src="images/2.jpg" id="i2">
+    <img src="images/3.jpg" id="i3">
+    <img src="images/4.jpg" id="i4">
+    <img src="images/5.jpg" id="i5">
+    <img src="images/6.jpg" id="i6">
+  </a-assets>
+
+  
+  <a-entity id="3d_vis"></a-entity>
+
+   <!--
+    <a-entity id="dog" geometry="primitive: box" material="src: url(dog.png)"
+              look-at="src: #squirrel"></a-entity>
+    <a-entity id="squirrel">
+      <a-animation id="running" attribute="position" to="100 0 0"></a-animation>
+    </a-entity>
+    -->
+      <a-camera id="cam" look-controls mouse-cursor wasd-controls position="0 1.6 0"> </a-camera>
+  
+  </a-scene>
+  
+   
+ <script>
+    function addEntity(elParent, htmlString, htmlTag){
+         var currEl = document.createElement(htmlTag);
+         for(var r=0; r < htmlString.length; r++ ){
+           var getArs = htmlString[r].split('='); 
+             if(getArs.length==2){//we have pair
+                currEl.setAttribute(getArs[0],getArs[1]); //set parsed attribute
+             }
+             if(getArs.length==1){//only solo argument - hey might be component
+                currEl.setAttribute(getArs[0],''); //set parsed attribute
+             }
+         }
+        elParent.appendChild(currEl); //appned created entity to given parent
+      }
+ 
+var currParent = document.getElementById("3d_vis"); 
+ for(var x=0; x<100; x++){
+  //<a-entity id="0" geometry="primitive: plane" material="src: #i0" look-at="#cam" random-position></a-entity>
+  var currIndex = Math.floor((Math.random() * 6) );
+  
+  addEntity(currParent, ['id='+x, 'geometry=primitive: plane', 'material=src: #i'+currIndex, 'look-at=#cam', 'random-position'], 'a-entity');
+ }
+
+ </script> 
+ 
+</body>
+</html>
+
