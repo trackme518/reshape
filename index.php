@@ -69,10 +69,10 @@ margin-bottom: 5px;
     <!-- interactive sliders for tSNE -->
     <div id="gui">   
       <div class="row">
-        <div class="column"> <button onclick="updatetsne()">RUN AGAIN</button> <br> <span>error: </span><span id="errorVal">0</span></div>
-        <div class="column"> <input id="iterations" class="slider" type="range" min="1" max="3000" value="1000"> <br> <span>iterations: </span><span id="iterations_val">1000</span>  </div>
-        <div class="column"> <input id="perplexity" class="slider" type="range" min="1" max="100" value="10"> <br> <span>perplexity: </span><span id="perplexity_val">10</span> </div>
-        <div class="column"> <input id="learnrate" class="slider" type="range" min="10" max="1000" value="100"> <br> <span>learning rate: </span><span id="learnrate_val">100</span> </div>
+        <div class="column"> <button onclick="updatetsne()">RUN AGAIN</button> </div> <!--  <br> <span>error: </span><span id="errorVal">0</span> -->
+        <div class="column"> <input id="iterations" class="slider" type="range" min="1" max="3000" value="1000"> <div>iterations: <span id="iterations_val">1000</span></div>  </div>
+        <div class="column"> <input id="perplex" class="slider" type="range" min="1" max="100" value="5"> <div>perplexity: <span id="perplex_val">5</span></div> </div>
+        <div class="column"> <input id="learnrate" class="slider" type="range" min="10" max="1000" value="100"> <div>learning rate: <span id="learnrate_val">100</span></div> </div>
       </div> 
     </div>
 
@@ -100,7 +100,7 @@ while (($row = fgetcsv($fileHandle, 0, ",")) !== FALSE) {
         //image type entry - link uploaded image
         if( $row[2] == 'image'){
          $pathsrc =  'backend/uploads/' . $row[1]; //random-position
-         $entities = $entities . '<a-entity id="'.$rowCounter.'" geometry="primitive: plane" material="src: '.$pathsrc.'" look-at="#cam"  class="clickable" a-frame-to-html="id: '.$row[0].'; path: '.$pathsrc.'; type: '.$row[2].'; target: #modal;"></a-entity>';
+         $entities = $entities . '<a-entity id="'.$rowCounter.'" random-position geometry="primitive: plane" material="src: '.$pathsrc.'" look-at="#cam"  class="clickable" a-frame-to-html="id: '.$row[0].'; path: '.$pathsrc.'; type: '.$row[2].'; target: #modal;"></a-entity>';
         }
         
         //video type entry - prepare youtube embed code and link associated thumb image 
@@ -111,7 +111,7 @@ while (($row = fgetcsv($fileHandle, 0, ",")) !== FALSE) {
              //youtube is bullying me with CORS - so we rather download the damm thumbmnails in upload script instead...
             //$videothumb = 'http://img.youtube.com/vi/'.$match[7].'/0.jpg';
             $videothumb =  'backend/uploads/youtube_' . $match[7] . '.jpg';
-            $entities = $entities . '<a-entity id="'.$rowCounter.'" geometry="primitive: plane" material="src: '.$videothumb.'" look-at="#cam" class="clickable" a-frame-to-html="id: '.$row[0].'; path: '.$row[1].'; type: '.$row[2].'; target: #modal;"></a-entity>';
+            $entities = $entities . '<a-entity id="'.$rowCounter.'" random-position geometry="primitive: plane" material="src: '.$videothumb.'" look-at="#cam" class="clickable" a-frame-to-html="id: '.$row[0].'; path: '.$row[1].'; type: '.$row[2].'; target: #modal;"></a-entity>';
           }//found video id of length 11
         
       }//end check video type
@@ -181,6 +181,8 @@ $printTagsToArray = '['. substr($printTagsToArray, 0, strlen($printTagsToArray)-
 $tsneJs = '
 <script>
 
+var numIter = 1000;
+
 var opt = {};
 opt.epsilon = 10;
 opt.perplexity = 5;
@@ -188,21 +190,23 @@ opt.dim = 3;
 var tsne = new tsnejs.tSNE(opt);
 var inputData = ' . $printTagsToArray . ';
 
-tsne.initDataRaw(inputData);
-for(var k = 0; k < 1000; k++) {
-    tsne.step(); // every time you call this, solution gets better
-}
-   
-var Y = tsne.getSolution(); // Y is an array of 2-D points that you can plot
+//tsne.initDataRaw(inputData);
+
 
 var posMultiply = 10; //multiply normalized positions
 var randomOffset = 2;
   
-var getNormalized = normalizePositions();
-console.log( "normalized solution: " + getNormalized );
+var getNormalized = runTsne();
+//console.log( "normalized solution: " + getNormalized );
 
+function runTsne(){
 
-function normalizePositions(){
+tsne.initDataRaw(inputData);
+
+  for(var k = 0; k < numIter; k++) {
+      tsne.step(); // every time you call this, solution gets better
+  }   
+  var Y = tsne.getSolution(); // Y is an array of 2-D points that you can plot
 
   var normalized = new Array( Y.length );
   var extremes =  [[1000, -1000],[1000, -1000],[1000, -1000]]; //2D array to hold extremes
@@ -252,104 +256,47 @@ function normalizePositions(){
     return normalized;
 }
 
-/*
-  let model = new TSNE({
-  dim: 3,
-  perplexity: 10.0,
-  earlyExaggeration: 4.0,
-  learningRate: 100.0,
-  nIter: 1000,
-  metric: "euclidean"
-});
-
-//metric metric: "euclidean" dice
-
-var inputData = ' . $printTagsToArray . ';
-
-console.log("dense data size: " + inputData.length + " ");
-//console.log("dense data: ' . $printTagsToArray . '");
-//console.log("'.$printTagsToNxD.'");
-
-model.init({
-  data: inputData,
-  type: "dense"
-});
-
-var posMultiply = 10;
-var errorVal = document.getElementById("errorVal");
-var runOnce = true;
+//change parameters interactively with sliders----------------------------------
 
 function updatetsne(){
-    
-    let [error, iter] = [0,0];
-    if(runOnce){
-      [error, iter] = model.run();
-    }else{
-      [error, iter] = model.rerun();
-    }
-
-let output = model.getOutput();
-let outputScaled = model.getOutputScaled();
-
-  for (i = 0; i < outputScaled.length; i++) {
-    var currEl = document.getElementById(i);
-    //reduce to 2D only - useful for debug
-    //currEl.setAttribute("position", outputScaled[i][0]*posMultiply + " " + outputScaled[i][1]*posMultiply + " " + 0 ); //assign solved tSNE to VR elements
-    //reduce to 3D:
-    currEl.setAttribute("position", outputScaled[i][0]*posMultiply + " " + outputScaled[i][1]*posMultiply + " " + outputScaled[i][2]*posMultiply ); //assign solved tSNE to VR elements
-    //log solutions
-    //console.log("solution: x " + outputScaled[i][0] + " y " + outputScaled[i][1] + " z " + outputScaled[i][2] );
-  }
-
-errorVal.innerHTML = error.toFixed(3); //display as rounded to three decimal places
-console.log("error: " + error);
-console.log("iter: " + iter);
+   runTsne();
 }
 
-updatetsne();
+var sliderIter = document.getElementById("iterations");
+var sliderIterVal = document.getElementById("iterations_val");
 
-//change parameters interactively with sliders----------------------------------
-var numiter = document.getElementById("iterations");
-var numiterVal = document.getElementById("iterations_val");
-
-var currperplexity = document.getElementById("perplexity");
-var currperplexityVal = document.getElementById("perplexity_val");
+var perplex = document.getElementById("perplex");
+console.log("slider val: "+perplex.value);
+var perplexityVal = document.getElementById("perplex_val");
 
 var learnrate = document.getElementById("learnrate");
 var learnrateVal = document.getElementById("learnrate_val");
 
-//var output = document.getElementById("demo");
-//output.innerHTML = slider.value; // Display the default slider value
+//set once on Load:--------------
+perplex.value = opt.perplexity;
+learnrate.value = opt.epsilon;
+sliderIter.value = numIter;
 
-// Update the current slider value (each time you drag the slider handle)
-numiter.oninput = function() {
-  model.nIter = this.value;
-  //console.log( "number of iterations set to: " + model.nIter );
-  numiterVal.innerHTML = this.value;
+sliderIter.oninput = function() {
+  numIter = this.value;
+  sliderIterVal.innerHTML = this.value;
 }
-currperplexity.oninput = function() {
-  model.perplexity = this.value;
-  //console.log( "perplexity set to: " + model.perplexity );
-  currperplexityVal.innerHTML = this.value;
+perplex.oninput = function() {
+  opt.perplexity = this.value;
+  perplexityVal.innerHTML = this.value;
 } 
 learnrate.oninput = function() {
-  model.learningRate = this.value;
-  //console.log( "learning rate set to: " + model.learningRate );
+  opt.epsilon = this.value;
   learnrateVal.innerHTML = this.value;
 }  
-*/
+
 </script>
 ';
-/*
- <span>iterations</span>
-    <input id="iterations" type="range" min="1" max="3000" value="1000">
-    
-    <span>perplexity</span>
-    <input id="perplexity" type="range" min="1" max="100" value="10">
-    
-    <span>learning rate</span>
-    <input id="learnrate" type="range" min="10" max="1000" value="100">
-*/
+
+//console.log("dense data size: " + inputData.length + " ");
+//console.log("dense data: ' . $printTagsToArray . '");
+//console.log("'.$printTagsToNxD.'");
+
 echo $tsneJs;
 ?>
     
