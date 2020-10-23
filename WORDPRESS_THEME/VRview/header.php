@@ -87,7 +87,67 @@ margin-bottom: 5px;
   top: 0%;
   left: 100%;
 }
- 
+/*   TOGGLE SWITCH   --------------- */
+ /* The switch - the box around the slider */
+/* Hide default input */
+.toggle input {
+  display: none;
+}
+
+/* The container and background */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 68px;
+  height: 30px;
+}
+.slidertoggle {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border: 1px solid #aaa;
+  border-radius: 30px;
+  transition: all 0.4s;
+}
+
+/* The sliding button */
+.slidertoggle:before {
+  position: absolute;
+  content: "";
+  width: 24px;
+  height: 24px;
+  left: 2px;
+  top: 2px;
+  background-color: #eee;
+  border-radius: 24px;
+  transition: all 0.4s;
+}
+
+/* On checked */
+input:checked + .slidertoggle {
+  background-color: #2196F3;
+}
+input:checked + .slidertoggle:before {
+  transform: translateX(37px);
+}
+
+.slidertoggle:after {
+  position: absolute;
+  content: "OFF";
+  top: 0px;
+  right: 5px;
+  color: #fff;
+  font-size: 0.9em;
+}
+
+input:checked + .slidertoggle:after {
+  content: "ON";
+  left: 10px;
+}
  </style>
 </head>
 <body>

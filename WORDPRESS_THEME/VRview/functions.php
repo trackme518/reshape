@@ -10,13 +10,22 @@ function wpdocs_theme_name_scripts() {
   wp_enqueue_script( 'jquery');
   //wp_enqueue_script( 'aframe104', get_template_directory_uri() . '/js/aframe104.js', array(), true );
   wp_enqueue_script( 'lookAt', get_template_directory_uri() . '/js/lookAt.js', array(), true ); // modified to enable look-at component see line 1255  https://unpkg.com/browse/aframe-look-at-component@0.8.0/
-  wp_enqueue_script( 'a-frame-to-html', get_template_directory_uri() . '/js/a-frame-to-html12.js', array(), true );
+  wp_enqueue_script( 'a-frame-to-html', get_template_directory_uri() . '/js/a-frame-to-html.js', array(), true );
   wp_enqueue_script( 'aframe-orbit-controls', get_template_directory_uri() . '/js/aframe-orbit-controls.js', array(), true ); //https://github.com/supermedium/superframe/tree/master/components/orbit-controls
   wp_enqueue_script( 'tsne', get_template_directory_uri() . '/js/tsne.js', array(), true );  //https://github.com/karpathy/tsnejs 
   wp_enqueue_script( 'aframe-randomizer-components', get_template_directory_uri() . '/js/aframe-randomizer-components.min.js', array(), true ); //https://github.com/supermedium/superframe/tree/master/components/randomizer
+  
+  //wp_enqueue_script( 'cluster3d', get_template_directory_uri() . '/js/cluster3d.js', array(), true ); //this is where magic happens - it rely on data printed by php to id="printTagsToArray" element
+  wp_enqueue_script('cluster3d1', get_template_directory_uri() . '/js/cluster3d2.js', array(), false, true); //import in footer instead of head
 }
 
+
+
 add_action( 'wp_enqueue_scripts', 'wpdocs_theme_name_scripts' );
+
+add_theme_support( 'post-thumbnails' );
+//set_post_thumbnail_size( 256, 256);
+//add_image_size( 'single-post-thumbnail', 600, 600 );
 
 //ADD EXTRA FIELD TO POST
 /*
