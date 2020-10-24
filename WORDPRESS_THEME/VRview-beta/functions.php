@@ -28,11 +28,11 @@ add_theme_support( 'post-thumbnails' );
 //add_image_size( 'single-post-thumbnail', 600, 600 );
 
 //ADD EXTRA FIELD TO POST
-/*
+
 // Add custom post meta
 function WPTime_add_custom_post_meta() { // By Qassim Hassan - wp-time.com
     $screen = "post"; // will be display custom post meta box in post editor, to display it in page type, change "post" to "page"
-    add_meta_box( 'bla-bla-bla', 'Custom Image Link', 'WPTime_custom_post_meta_callback', $screen, 'side', 'default', null );
+    add_meta_box( 'bla-bla-bla', 'Custom Label', 'WPTime_custom_post_meta_callback', $screen, 'side', 'default', null );
 }
 add_action( 'add_meta_boxes', 'WPTime_add_custom_post_meta' );
  
@@ -42,7 +42,7 @@ function WPTime_custom_post_meta_callback($post){ // By Qassim Hassan - wp-time.
  
     $value = get_post_meta( $post->ID, 'custom_image_name', true );
  
-    echo '<input type="text" name="custom_image_name" value="' . esc_attr( $value ) . '" size="30" placeholder="Enter image link">';
+    echo '<input type="text" name="custom_image_name" value="' . esc_attr( $value ) . '" size="30" placeholder="Enter label">';
 }
  
  
@@ -81,7 +81,6 @@ function WPTime_custom_post_meta_save_data( $post_id ) { // By Qassim Hassan - w
 }
 add_action( 'save_post', 'WPTime_custom_post_meta_save_data');
 
-*/
 
 /*
 function create_posttype() {
