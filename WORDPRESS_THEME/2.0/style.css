@@ -1,0 +1,15 @@
+/*
+Theme Name: VR View
+Theme URI: http://www.trackmeifyoucan.com
+Author: Vojtech Leischner
+Author URI: http://www.trackmeifyoucan.com
+Description: Display your posts in 3D based on tags. Visually similar to tag cloud but this theme is using machine learning tSNE algorithm to calculate position of each post based on tags or categories. Posts with similar tags/categories will end up closer together. Do not forget to check theme customizer 3D visualisation options. 
+Tags: tSNE, VR, 3D, webVR, dataanalytics, data, graph, tags, clouds, tagcloud
+Version: 1.1
+Requires at least: 5.0
+Tested up to: 5.4
+Requires PHP: 7.0
+License: All rights reserved
+License URI: http://www.notimplmentedyet.org
+Text Domain: vrview
+*/
